@@ -35,9 +35,11 @@ public abstract class AggregateRoot {
     public void markChangesAsCommitted(){
         this.changes.clear();
     }
-    public void applyChanges(BaseEvent event, Boolean isNewEvent){
+    public void applyChange(BaseEvent event, Boolean isNewEvent){
         try{
             var method = getClass().getDeclaredMethod("apply", event.getClass());
+            method.setAccessible(true);
+            method.invoke(this,event);
         } catch (NoSuchMethodException e) {
             logger.log(Level.WARNING, MessageFormat.format("The apply method was not found in the aggregate for {0}", event.getClass().getName()));
         }catch (Exception e){
@@ -50,10 +52,10 @@ public abstract class AggregateRoot {
     }
 
     public void raiseEvent(BaseEvent event){
-        applyChanges(event, true);
+        applyChange(event, true);
     }
 
     public void replayEvent(Iterable<BaseEvent> events){
-        events.forEach(event -> applyChanges(event,false));
+        events.forEach(event -> applyChange(event,false));
     }
 }

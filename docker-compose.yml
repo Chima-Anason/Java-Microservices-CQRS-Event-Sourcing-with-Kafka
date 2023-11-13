@@ -30,16 +30,20 @@ services:
     ports:
       - 27017:27017
     volumes:
-      - mongodb_data_container:/data/db
-    # environment:
-    #   - MONGO_INITDB_ROOT_USERNAME=cbnuser
-    #   - MONGO_INITDB_ROOT_PASSWORD=cbnpass#
+      - mongodb_data:/data
+    # environment: 
+    #         - MONGO_INITDB_ROOT_USERNAME=rootuser
+    #         - MONGO_INITDB_ROOT_PASSWORD=rootpass
   mongo-express:
     image: mongo-express
     container_name: mongo-express
     restart: always
     ports:
       - 8081:8081
+    environment:
+            # - ME_CONFIG_MONGODB_ADMINUSERNAME=rootuser
+            # - ME_CONFIG_MONGODB_ADMINPASSWORD=rootpass
+            - ME_CONFIG_MONGODB_SERVER=mongo-container
 
   mysql:
     image: mysql:latest
@@ -66,7 +70,7 @@ volumes:
     driver: local
   kafka_data:
     driver: local
-  mongodb_data_container:
+  mongodb_data:
     driver: local
   mysql_data_container:
     driver: local
