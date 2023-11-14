@@ -24,6 +24,7 @@ public class AccountCommandHandler implements  CommandHandler{
 
     @Override
     public void handle(WithdrawFundsCommand command) {
+        //Replay list of events and get the current state
         var aggregate = eventSourcingHandler.getById(command.getId());
         if(command.getAmount() > aggregate.getBalance()){
             throw new IllegalStateException("Withdrawal declined, insufficient funds!");
@@ -37,5 +38,10 @@ public class AccountCommandHandler implements  CommandHandler{
         var aggregate = eventSourcingHandler.getById(command.getId());
         aggregate.closeAccount();
         eventSourcingHandler.save(aggregate);
+    }
+
+    @Override
+    public void handle(RestoreReadDbCommand command) {
+        eventSourcingHandler.republishEvents();
     }
 }
